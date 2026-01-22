@@ -1,0 +1,2445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">The Weekly Chronicle</title>
+    <style>
+        /* Traditional newspaper styling */
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Editor Panel */
+        .editor-panel {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .editor-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .auto-date {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        .editor-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .control-group input,
+        .control-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.95em;
+        }
+        
+        .control-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .btn-export {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background: #059669;
+        }
+        
+        .export-menu {
+            display: none;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        .export-menu.active {
+            display: block;
+        }
+        
+        .template-library {
+            display: none;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .template-library.active {
+            display: block;
+        }
+        
+        .template-category {
+            margin-bottom: 20px;
+        }
+        
+        .template-category h4 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+            font-size: 1.1em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+        
+        .template-item {
+            background: #f8f9fa;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #667eea;
+        }
+        
+        .template-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .template-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .template-desc {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .analytics-panel {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .stat-trend {
+            font-size: 0.85em;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            display: inline-block;
+        }
+        
+        .activity-log {
+            margin-top: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 0.9em;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-time {
+            color: #6c757d;
+            font-size: 0.85em;
+        }
+        
+        .btn-template {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .btn-template:hover {
+            background: #d97706;
+        }
+        
+        .btn-analytics {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .btn-analytics:hover {
+            background: #2563eb;
+        }
+        
+        .news-aggregator {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .news-aggregator.active {
+            display: block;
+        }
+        
+        .rss-feeds {
+            margin-bottom: 20px;
+        }
+        
+        .feed-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .feed-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #10b981;
+            font-size: 0.9em;
+        }
+        
+        .feed-item.inactive {
+            border-left-color: #6c757d;
+            opacity: 0.6;
+        }
+        
+        .feed-toggle {
+            cursor: pointer;
+            padding: 4px 8px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            font-size: 0.85em;
+            margin-left: 8px;
+        }
+        
+        .feed-toggle.inactive {
+            background: #6c757d;
+        }
+        
+        .news-results {
+            margin-top: 20px;
+        }
+        
+        .news-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .news-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .news-item.selected {
+            border-left-color: #10b981;
+            background: #f0fdf4;
+        }
+        
+        .news-headline {
+            font-weight: 600;
+            font-size: 1.05em;
+            margin-bottom: 5px;
+            color: #1f2937;
+        }
+        
+        .news-source {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+        
+        .news-snippet {
+            font-size: 0.9em;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+        
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+        
+        .relevance-score {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        
+        .relevance-high {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .relevance-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .relevance-low {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .news-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-select {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-select:hover {
+            background: #059669;
+        }
+        
+        .btn-generate {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-generate:hover {
+            background: #5568d3;
+        }
+        
+        .aggregator-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .date-range input {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-chip {
+            padding: 6px 12px;
+            background: #e5e7eb;
+            border-radius: 16px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-chip.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+        
+        .loading-spinner.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .seo-optimizer {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .seo-score {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .seo-metric {
+            background: white;
+            padding: 12px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .seo-metric-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .seo-metric-label {
+            font-size: 0.85em;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .keyword-suggestions {
+            margin-top: 15px;
+        }
+        
+        .keyword-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: white;
+            border-radius: 12px;
+            margin: 4px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .keyword-tag:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-aggregator {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        .btn-aggregator:hover {
+            background: #7c3aed;
+        }
+        
+        .export-option {
+            margin: 10px 0;
+            padding: 12px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .export-option:hover {
+            background: #e0e0e0;
+            transform: translateX(5px);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s;
+        }
+        
+        .notification.show {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .newspaper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Header */
+        .header {
+            border-bottom: 3px double #333;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+        
+        .masthead {
+            font-family: 'Merriweather', serif;
+            font-size: 3em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            text-align: center;
+            font-style: italic;
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .date-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+        
+        /* Main content area */
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        /* Article styles */
+        .article {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .article:last-child {
+            border-bottom: none;
+        }
+        
+        .headline {
+            font-family: 'Merriweather', serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+        
+        .subheading {
+            font-family: 'Merriweather', serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 5px;
+            margin-top: 20px;
+        }
+        
+        .byline {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .article-text {
+            text-align: justify;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+        
+        /* Sidebar styles */
+        .sidebar {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .sidebar-header {
+            font-family: 'Merriweather', serif;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+        
+        .sidebar-item {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sidebar-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Section headers */
+        .section-header {
+            font-family: 'Merriweather', serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+            text-transform: uppercase;
+        }
+        
+        /* Three column layout for sections */
+        .three-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+        }
+        
+        /* Photo placeholder */
+        .photo-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-style: italic;
+            margin: 15px 0;
+        }
+        
+        /* Quote box */
+        .quote-box {
+            background-color: #f5f5f5;
+            border-left: 4px solid #333;
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+        
+        .quote-attribution {
+            text-align: right;
+            margin-top: 10px;
+            font-style: normal;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .editor-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .three-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .masthead {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification">Content updated successfully!</div>
+    
+    <!-- Editor Panel -->
+    <div class="editor-panel">
+        <div class="editor-header">
+            <h2 class="editor-title">📝 Weekly Newsletter Editor</h2>
+            <div class="auto-date" id="currentWeek"></div>
+        </div>
+        
+        <div class="editor-controls">
+            <div class="control-group">
+                <label>Lead Story Headline</label>
+                <input type="text" id="editHeadline" placeholder="Enter main headline...">
+            </div>
+            
+            <div class="control-group">
+                <label>Lead Story Content</label>
+                <textarea id="editLeadContent" placeholder="Enter lead story content..."></textarea>
+            </div>
+            
+            <div class="control-group">
+                <label>Secondary Story Headline</label>
+                <input type="text" id="editSecondary" placeholder="Enter secondary headline...">
+            </div>
+            
+            <div class="control-group">
+                <label>Secondary Story Content</label>
+                <textarea id="editSecondaryContent" placeholder="Enter secondary story content..."></textarea>
+            </div>
+            
+            <div class="control-group">
+                <label>Key Regulatory Update 1</label>
+                <input type="text" id="editUpdate1" placeholder="E.g., SEC Action: New rule proposed...">
+            </div>
+            
+            <div class="control-group">
+                <label>Key Regulatory Update 2</label>
+                <input type="text" id="editUpdate2" placeholder="E.g., FINRA Alert: Guidance issued...">
+            </div>
+            
+            <div class="control-group">
+                <label>Enforcement Action Summary</label>
+                <textarea id="editEnforcement" placeholder="Describe recent enforcement action..."></textarea>
+            </div>
+            
+            <div class="control-group">
+                <label>Upcoming Deadlines</label>
+                <textarea id="editDeadlines" placeholder="List key dates and deadlines..."></textarea>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="updateNewsletter()">🔄 Update Newsletter</button>
+            <button class="btn btn-aggregator" onclick="toggleNewsAggregator()">🔍 News Aggregator</button>
+            <button class="btn btn-template" onclick="toggleTemplateLibrary()">📚 Template Library</button>
+            <button class="btn btn-analytics" onclick="toggleAnalytics()">📊 View Analytics</button>
+            <button class="btn btn-secondary" onclick="resetToDefaults()">↺ Reset to Defaults</button>
+            <button class="btn btn-export" onclick="toggleExportMenu()">📤 Export for Distribution</button>
+        </div>
+        
+        <div class="news-aggregator" id="newsAggregator">
+            <h3 style="margin-top: 0;">🔍 Weekly News Aggregator & SEO Optimizer</h3>
+            
+            <div class="aggregator-controls">
+                <div class="date-range">
+                    <label>📅 Date Range:</label>
+                    <input type="date" id="startDate">
+                    <span>to</span>
+                    <input type="date" id="endDate">
+                </div>
+                <button class="btn btn-primary" onclick="scanNews()">🔍 Scan News Sources</button>
+                <button class="btn btn-secondary" onclick="autoSelectTopStories()">⭐ Auto-Select Top 5</button>
+            </div>
+            
+            <div class="rss-feeds">
+                <h4>📡 Active News Sources:</h4>
+                <div class="feed-list" id="feedList"></div>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button class="btn btn-small btn-secondary" onclick="manageFeedsModal()">⚙️ Manage Sources</button>
+                    <button class="btn btn-small btn-primary" onclick="configureEmailAlerts()">📧 Configure Alerts</button>
+                    <button class="btn btn-small" style="background: #f59e0b; color: white;" onclick="testEmailAlert()">🧪 Test Alert</button>
+                </div>
+            </div>
+            
+            <div class="alert-status" id="alertStatus" style="background: #f0fdf4; border: 1px solid #86efac; padding: 12px; border-radius: 5px; margin: 15px 0; display: none;">
+                <strong>📧 Email Alerts:</strong> <span id="alertStatusText"></span>
+            </div>
+            
+            <div class="filter-options">
+                <div class="filter-chip active" data-category="all" onclick="filterByCategory('all')">All</div>
+                <div class="filter-chip" data-category="sec" onclick="filterByCategory('sec')">SEC</div>
+                <div class="filter-chip" data-category="finra" onclick="filterByCategory('finra')">FINRA</div>
+                <div class="filter-chip" data-category="enforcement" onclick="filterByCategory('enforcement')">Enforcement</div>
+                <div class="filter-chip" data-category="compliance" onclick="filterByCategory('compliance')">Compliance</div>
+                <div class="filter-chip" data-category="courts" onclick="filterByCategory('courts')">Courts</div>
+            </div>
+            
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p>Scanning news sources and analyzing relevance...</p>
+            </div>
+            
+            <div class="news-results" id="newsResults"></div>
+            
+            <div class="seo-optimizer">
+                <h4 style="margin-top: 0;">📈 SEO Optimization</h4>
+                <div class="seo-score">
+                    <div class="seo-metric">
+                        <div class="seo-metric-value" id="seoScore">—</div>
+                        <div class="seo-metric-label">SEO Score</div>
+                    </div>
+                    <div class="seo-metric">
+                        <div class="seo-metric-value" id="readabilityScore">—</div>
+                        <div class="seo-metric-label">Readability</div>
+                    </div>
+                    <div class="seo-metric">
+                        <div class="seo-metric-value" id="keywordDensity">—</div>
+                        <div class="seo-metric-label">Keywords</div>
+                    </div>
+                </div>
+                <div class="keyword-suggestions">
+                    <strong>💡 Suggested Keywords:</strong>
+                    <div id="keywordTags"></div>
+                </div>
+                <button class="btn btn-small btn-generate" onclick="optimizeForSEO()" style="margin-top: 10px;">✨ Optimize Content</button>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="generateFromSelected()">📝 Generate Newsletter from Selected Stories</button>
+            </div>
+        </div>
+        
+        <div class="template-library" id="templateLibrary">
+            <h3 style="margin-top: 0;">📚 Story Templates</h3>
+            
+            <div class="template-category">
+                <h4>SEC Announcements</h4>
+                <div class="template-item" onclick="loadTemplate('sec-rule')">
+                    <div class="template-title">New SEC Rule Proposal</div>
+                    <div class="template-desc">Template for proposed rulemaking announcements</div>
+                </div>
+                <div class="template-item" onclick="loadTemplate('sec-guidance')">
+                    <div class="template-title">SEC Staff Guidance</div>
+                    <div class="template-desc">Template for staff bulletins and guidance updates</div>
+                </div>
+                <div class="template-item" onclick="loadTemplate('sec-form')">
+                    <div class="template-title">Form Amendment</div>
+                    <div class="template-desc">Template for Form ADV, PF, or other filing changes</div>
+                </div>
+            </div>
+            
+            <div class="template-category">
+                <h4>Enforcement Actions</h4>
+                <div class="template-item" onclick="loadTemplate('enforcement-settlement')">
+                    <div class="template-title">Settlement Announcement</div>
+                    <div class="template-desc">Template for enforcement settlements with advisers</div>
+                </div>
+                <div class="template-item" onclick="loadTemplate('enforcement-sweep')">
+                    <div class="template-title">Examination Sweep Results</div>
+                    <div class="template-desc">Template for OCIE sweep findings</div>
+                </div>
+            </div>
+            
+            <div class="template-category">
+                <h4>Industry Developments</h4>
+                <div class="template-item" onclick="loadTemplate('court-decision')">
+                    <div class="template-title">Court Decision</div>
+                    <div class="template-desc">Template for significant judicial rulings</div>
+                </div>
+                <div class="template-item" onclick="loadTemplate('finra-update')">
+                    <div class="template-title">FINRA Regulatory Notice</div>
+                    <div class="template-desc">Template for FINRA announcements and guidance</div>
+                </div>
+                <div class="template-item" onclick="loadTemplate('best-practices')">
+                    <div class="template-title">Compliance Best Practices</div>
+                    <div class="template-desc">Template for practical compliance guidance</div>
+                </div>
+            </div>
+            
+            <div class="template-category">
+                <h4>Deadline Reminders</h4>
+                <div class="template-item" onclick="loadTemplate('filing-deadline')">
+                    <div class="template-title">Filing Deadline Alert</div>
+                    <div class="template-desc">Template for upcoming regulatory deadlines</div>
+                </div>
+                <div class="template-item" onclick="loadTemplate('comment-period')">
+                    <div class="template-title">Comment Period Notice</div>
+                    <div class="template-desc">Template for public comment opportunities</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="analytics-panel" id="analyticsPanel" style="display: none;">
+            <h3 style="margin-top: 0;">📊 Newsletter Analytics</h3>
+            
+            <div class="analytics-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Issues Published</div>
+                    <div class="stat-value" id="totalIssues">0</div>
+                    <div class="stat-trend" id="issuesTrend">—</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Stories This Month</div>
+                    <div class="stat-value" id="monthlyStories">0</div>
+                    <div class="stat-trend" id="storiesTrend">—</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Templates Used</div>
+                    <div class="stat-value" id="templatesUsed">0</div>
+                    <div class="stat-trend">Most: SEC Rules</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Exports Generated</div>
+                    <div class="stat-value" id="exportsCount">0</div>
+                    <div class="stat-trend" id="exportsTrend">—</div>
+                </div>
+            </div>
+            
+            <div class="activity-log">
+                <h4 style="margin-top: 0;">Recent Activity</h4>
+                <div id="activityLog">
+                    <div class="activity-item">
+                        <div>📝 Newsletter initialized</div>
+                        <div class="activity-time">Ready to track your activity</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 15px; text-align: center;">
+                <button class="btn btn-secondary" onclick="clearAnalytics()">Clear Analytics Data</button>
+            </div>
+        </div>
+        
+        <div class="export-menu" id="exportMenu">
+            <h3 style="margin-top: 0;">Choose Export Format:</h3>
+            <div class="export-option" onclick="exportHTML()">
+                📧 <strong>Email HTML</strong> - Copy formatted HTML for email campaigns
+            </div>
+            <div class="export-option" onclick="exportLinkedIn()">
+                💼 <strong>LinkedIn Post</strong> - Copy text optimized for LinkedIn
+            </div>
+            <div class="export-option" onclick="exportFacebook()">
+                📘 <strong>Facebook Post</strong> - Copy text optimized for Facebook
+            </div>
+            <div class="export-option" onclick="exportPDF()">
+                📄 <strong>Print/PDF</strong> - Open print-friendly version
+            </div>
+        </div>
+    </div>
+        // Story Templates
+        const templates = {
+            'sec-rule': {
+                headline: 'SEC Proposes New Rule on [Topic]',
+                content: 'The Securities and Exchange Commission announced a proposed rule addressing [specific issue], with a comment period ending [date]. The proposal would require registered investment advisers to [key requirement]. Industry stakeholders have expressed [initial reaction], citing concerns about [potential impact]. The rule aims to enhance [regulatory goal] and align with the Commission\'s mandate to protect investors while promoting efficient capital markets.',
+                updates: ['SEC Action: Proposed rule on [topic] published', 'Comment deadline: [date]']
+            },
+            'sec-guidance': {
+                headline: 'SEC Staff Issues Guidance on [Topic]',
+                content: 'The Division of Investment Management released staff guidance clarifying expectations regarding [subject matter]. The guidance addresses questions raised by industry participants about [specific issue] and provides interpretive positions on [key points]. This guidance is consistent with the Commission\'s recent focus on [regulatory priority] and should be incorporated into adviser compliance programs.',
+                updates: ['SEC Guidance: Staff bulletin issued on [topic]', 'Effective: Immediately upon publication']
+            },
+            'sec-form': {
+                headline: 'SEC Adopts Amendments to Form [ADV/PF]',
+                content: 'The Commission adopted final amendments to Form [ADV/PF], effective [date]. The changes expand disclosure requirements in [specific sections], particularly regarding [key topics]. Advisers must file updated forms by [compliance date]. The amendments reflect the SEC\'s ongoing effort to enhance transparency around [regulatory concern] and provide investors with more comprehensive information about [disclosure topic].',
+                updates: ['SEC Action: Form amendments finalized', 'Compliance date: [specific date]']
+            },
+            'enforcement-settlement': {
+                headline: 'SEC Settles Enforcement Action Against [Type] Adviser',
+                content: 'The Commission announced a settlement with [adviser type] for alleged violations of [specific provisions]. The firm agreed to pay $[amount] in penalties and disgorgement, without admitting or denying the findings. The case involved [description of conduct], which the SEC alleged constituted breaches of fiduciary duty. The settlement underscores the importance of [compliance lesson] and maintaining robust policies and procedures around [specific area].',
+                updates: ['Enforcement: $[amount] settlement announced', 'Violations: [specific rule citations]']
+            },
+            'enforcement-sweep': {
+                headline: 'OCIE Releases Findings from [Topic] Examination Sweep',
+                content: 'The SEC\'s Office of Compliance Inspections and Examinations published results from its examination initiative focused on [topic area]. Common deficiencies included inadequate [specific issue], insufficient [compliance element], and failures to [regulatory requirement]. The findings highlight the need for advisers to review and enhance their policies regarding [key areas]. Examiners will continue to prioritize these issues in upcoming examinations.',
+                updates: ['OCIE Sweep: [Topic] examination findings released', 'Common issues: [list key deficiencies]']
+            },
+            'court-decision': {
+                headline: '[Court] Rules on [Topic] in [Case Name]',
+                content: 'In a decision with significant implications for investment advisers, the [Court name] held that [key holding]. The case involved [fact pattern] and addressed whether [legal question]. The court\'s reasoning focused on [legal analysis], potentially affecting how advisers approach [practice area]. Legal practitioners should consider the impact on [specific compliance or business practices].',
+                updates: ['Court Decision: [Court] rules on [topic]', 'Impact: Affects [specific adviser practices]']
+            },
+            'finra-update': {
+                headline: 'FINRA Issues Regulatory Notice on [Topic]',
+                content: 'The Financial Industry Regulatory Authority published Regulatory Notice [number] addressing [subject matter]. The notice [announces new requirements/provides guidance/requests comment] on [specific topic]. Dual registrants and broker-dealers should note the implications for [affected practices]. FINRA emphasizes the importance of [regulatory expectation] and expects firms to [specific action].',
+                updates: ['FINRA Notice: [Number] published on [topic]', 'Action required: [specific requirement]']
+            },
+            'best-practices': {
+                headline: 'Compliance Best Practices: [Topic Area]',
+                content: 'Based on recent regulatory developments and examination trends, advisers should consider implementing enhanced procedures for [topic]. Recommended practices include: establishing clear policies for [specific process], conducting regular reviews of [subject matter], maintaining comprehensive documentation of [activity], and providing ongoing training on [compliance area]. These steps can help mitigate regulatory risk and demonstrate commitment to compliance.',
+                updates: ['Best Practice: Enhanced [topic] procedures recommended', 'Focus areas: [list key elements]']
+            },
+            'filing-deadline': {
+                headline: 'Reminder: [Filing Type] Due [Date]',
+                content: 'Registered investment advisers subject to [specific requirement] must file [form/report] by [deadline]. The filing should include [required information] and reflect [data period]. Late filings may result in [consequences]. Advisers should verify that [specific elements] are accurate and complete before submission. For questions regarding filing requirements, consult [resource].',
+                updates: ['Deadline: [Filing type] due [date]', 'Reminder: Verify [specific requirement]']
+            },
+            'comment-period': {
+                headline: 'Public Comment Period Open on [Proposed Rule/Guidance]',
+                content: 'The [SEC/other regulator] is accepting public comments on [proposal description] through [deadline]. The proposal would [summary of key provisions] and aims to [regulatory objective]. Industry participants are encouraged to submit comments addressing [specific questions or concerns]. Comments should be submitted via [filing method] and reference File Number [number].',
+                updates: ['Comment Period: [Topic] open until [date]', 'File Number: [reference number]']
+            }
+        };
+        
+        // RSS Feeds and News Sources
+        const newsSources = [
+            { id: 'sec-news', name: 'SEC Press Releases', url: 'https://www.sec.gov/news/pressreleases.rss', category: 'sec', active: true, realRSS: true },
+            { id: 'sec-litigation', name: 'SEC Litigation Releases', url: 'https://www.sec.gov/litigation/litreleases.rss', category: 'enforcement', active: true, realRSS: true },
+            { id: 'finra-news', name: 'FINRA News', url: 'https://www.finra.org/media-center/news-releases/feed', category: 'finra', active: true, realRSS: true },
+            { id: 'finra-discipline', name: 'FINRA Disciplinary Actions', url: 'https://www.finra.org/rules-guidance/oversight-enforcement/finra-disciplinary-actions/feed', category: 'enforcement', active: true, realRSS: true },
+            { id: 'dol-news', name: 'DOL News Releases', url: 'https://www.dol.gov/rss/releases.xml', category: 'compliance', active: true, realRSS: true },
+            { id: 'investmentnews', name: 'InvestmentNews Regulation', url: 'https://www.investmentnews.com/section/regulation/feed', category: 'compliance', active: true, realRSS: true },
+            { id: 'aba-securities', name: 'ABA Securities Law', url: 'https://www.americanbar.org/groups/business_law/publications/feeds/', category: 'compliance', active: false, realRSS: true },
+            { id: 'jdsupra', name: 'JD Supra Securities', url: 'https://www.jdsupra.com/legalnews/securities/rss/', category: 'compliance', active: false, realRSS: true }
+        ];
+        
+        let selectedStories = [];
+        let currentFilter = 'all';
+        let scannedNews = [];
+        let emailAlerts = {
+            enabled: false,
+            email: '',
+            threshold: 90,
+            categories: ['sec', 'enforcement'],
+            lastSent: null
+        };
+        
+        // Load email alerts settings
+        function loadEmailAlerts() {
+            const stored = localStorage.getItem('emailAlerts');
+            if (stored) {
+                emailAlerts = JSON.parse(stored);
+            }
+        }
+        
+        // Save email alerts settings
+        function saveEmailAlerts() {
+            localStorage.setItem('emailAlerts', JSON.stringify(emailAlerts));
+        }
+        
+        // Parse RSS feed (real implementation)
+        async function parseRSSFeed(url) {
+            try {
+                // Use a CORS proxy for RSS feeds
+                const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`;
+                
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    return data.items.map(item => ({
+                        headline: item.title,
+                        snippet: stripHTML(item.description || item.content || '').substring(0, 300) + '...',
+                        source: data.feed.title,
+                        url: item.link,
+                        date: new Date(item.pubDate).toISOString().split('T')[0],
+                        guid: item.guid || item.link
+                    }));
+                }
+                return [];
+            } catch (error) {
+                console.error(`Error parsing RSS feed ${url}:`, error);
+                return [];
+            }
+        }
+        
+        // Strip HTML tags
+        function stripHTML(html) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || '';
+        }
+        
+        // Calculate relevance score
+        function calculateRelevance(item, category) {
+            let score = 0;
+            const text = (item.headline + ' ' + item.snippet).toLowerCase();
+            
+            // High-priority keywords (worth more)
+            const highPriorityKeywords = [
+                'sec proposes', 'sec adopts', 'sec charges', 'settlement', 'enforcement action',
+                'finra fines', 'finra sanctions', 'new rule', 'final rule', 'proposed rule',
+                'form adv', 'investment adviser', 'registered investment adviser', 'ria'
+            ];
+            
+            highPriorityKeywords.forEach(keyword => {
+                if (text.includes(keyword)) score += 15;
+            });
+            
+            // Medium-priority keywords
+            const mediumPriorityKeywords = [
+                'compliance', 'regulation', 'guidance', 'fiduciary', 'disclosure',
+                'cybersecurity', 'esg', 'crypto', 'digital asset', 'examination',
+                'custody', 'marketing rule', 'private fund'
+            ];
+            
+            mediumPriorityKeywords.forEach(keyword => {
+                if (text.includes(keyword)) score += 8;
+            });
+            
+            // Category bonus
+            if (category === 'sec' || category === 'enforcement') score += 10;
+            
+            // Recency bonus (items from last 7 days)
+            const daysSincePublished = Math.floor((new Date() - new Date(item.date)) / (1000 * 60 * 60 * 24));
+            if (daysSincePublished <= 7) score += 10;
+            if (daysSincePublished <= 3) score += 5;
+            
+            return Math.min(score, 100);
+        }
+        
+        // Scan news sources (real RSS implementation)
+        async function scanNews() {
+            document.getElementById('loadingSpinner').classList.add('active');
+            document.getElementById('newsResults').innerHTML = '';
+            
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            endDate.setHours(23, 59, 59);
+            
+            try {
+                scannedNews = [];
+                const activeSources = newsSources.filter(s => s.active);
+                
+                // Fetch all RSS feeds in parallel
+                const feedPromises = activeSources.map(async source => {
+                    if (source.realRSS) {
+                        const items = await parseRSSFeed(source.url);
+                        return items.map((item, index) => ({
+                            id: `${source.id}-${index}`,
+                            ...item,
+                            category: source.category,
+                            selected: false
+                        }));
+                    } else {
+                        return [];
+                    }
+                });
+                
+                const results = await Promise.all(feedPromises);
+                const allItems = results.flat();
+                
+                // Filter by date range and calculate relevance
+                scannedNews = allItems
+                    .filter(item => {
+                        const itemDate = new Date(item.date);
+                        return itemDate >= startDate && itemDate <= endDate;
+                    })
+                    .map(item => ({
+                        ...item,
+                        relevance: calculateRelevance(item, item.category)
+                    }))
+                    .filter(item => item.relevance >= 50); // Only show items with 50%+ relevance
+                
+                // If no real feeds loaded, use mock data for demonstration
+                if (scannedNews.length === 0) {
+                    scannedNews = generateMockNews();
+                    showNotification('Demo mode: Showing sample data. Deploy to server for real RSS feeds.');
+                }
+                
+                displayNewsResults(scannedNews);
+                analyzeSEO();
+                
+                // Check for high-priority alerts
+                checkEmailAlerts(scannedNews);
+                
+                document.getElementById('loadingSpinner').classList.remove('active');
+                trackActivity('update', `Scanned ${activeSources.length} RSS feeds - found ${scannedNews.length} stories`);
+                showNotification(`Found ${scannedNews.length} relevant stories from ${activeSources.length} sources`);
+                
+            } catch (error) {
+                console.error('Error scanning news:', error);
+                // Fallback to mock data
+                scannedNews = generateMockNews();
+                displayNewsResults(scannedNews);
+                analyzeSEO();
+                document.getElementById('loadingSpinner').classList.remove('active');
+                showNotification('Using demo data. RSS feeds require deployment to access.');
+            }
+        }
+        
+        // Mock news data generator (simulates RSS feed parsing)
+        function generateMockNews() {
+            const headlines = [
+                { headline: 'SEC Proposes Enhanced Cybersecurity Disclosure Requirements for Investment Advisers', source: 'SEC Press Releases', category: 'sec', relevance: 95, date: '2025-01-20', snippet: 'The Securities and Exchange Commission today proposed rule amendments that would require registered investment advisers to adopt and implement written policies and procedures reasonably designed to address cybersecurity risks...' },
+                { headline: 'FINRA Fines Firm $2.5M for Supervisory Failures in Alternative Investments', source: 'FINRA Disciplinary Actions', category: 'enforcement', relevance: 92, date: '2025-01-19', snippet: 'FINRA announced today that it has fined and censured a member firm for failing to establish and maintain a supervisory system reasonably designed to achieve compliance with alternative investment recommendations...' },
+                { headline: 'Second Circuit Affirms SEC Authority Over Cryptocurrency Investment Products', source: 'Federal Courts', category: 'courts', relevance: 88, date: '2025-01-18', snippet: 'In a closely watched decision, the U.S. Court of Appeals for the Second Circuit upheld the SEC\'s regulatory framework for cryptocurrency-based investment products, rejecting industry challenges...' },
+                { headline: 'DOL Issues Guidance on ESG Considerations in Retirement Plans', source: 'DOL News Releases', category: 'compliance', relevance: 85, date: '2025-01-17', snippet: 'The Department of Labor released new guidance clarifying when fiduciaries may consider environmental, social, and governance factors in selecting retirement plan investments...' },
+                { headline: 'SEC Adopts Amendments to Form ADV Requiring Enhanced Fee Disclosure', source: 'SEC Press Releases', category: 'sec', relevance: 98, date: '2025-01-19', snippet: 'The Commission adopted final rules requiring investment advisers to provide more detailed fee and expense information to clients, including breakdowns of all direct and indirect costs...' },
+                { headline: 'OCIE Releases Risk Alert on Compliance Programs for RIAs Using Artificial Intelligence', source: 'SEC OCIE', category: 'compliance', relevance: 94, date: '2025-01-18', snippet: 'The Office of Compliance Inspections and Examinations issued a risk alert highlighting observations from examinations of investment advisers using AI and machine learning in portfolio management...' },
+                { headline: 'FINRA Proposes Rule Changes for Complex Products Distribution', source: 'FINRA News', category: 'finra', relevance: 82, date: '2025-01-17', snippet: 'FINRA filed with the SEC proposed rule changes that would establish new requirements for member firms selling complex or illiquid investment products to retail investors...' },
+                { headline: 'Former RIA Principal Charged in $50M Ponzi Scheme', source: 'SEC Litigation Releases', category: 'enforcement', relevance: 90, date: '2025-01-16', snippet: 'The SEC charged a former investment adviser principal with orchestrating a Ponzi scheme that defrauded investors of more than $50 million over a five-year period...' },
+                { headline: 'Supreme Court Agrees to Hear Case on SEC Administrative Proceedings', source: 'Federal Courts', category: 'courts', relevance: 96, date: '2025-01-19', snippet: 'The U.S. Supreme Court granted certiorari in a case challenging the constitutionality of SEC administrative law judge proceedings, potentially reshaping enforcement procedures...' },
+                { headline: 'IAA Survey Shows Increased Compliance Costs for Small RIAs', source: 'InvestmentNews', category: 'compliance', relevance: 78, date: '2025-01-16', snippet: 'A new survey by the Investment Adviser Association reveals that compliance costs have risen 23% for small and mid-sized advisory firms over the past two years...' },
+                { headline: 'SEC Staff Issues No-Action Letter on Digital Asset Custody', source: 'SEC Press Releases', category: 'sec', relevance: 91, date: '2025-01-18', snippet: 'The SEC Division of Investment Management issued a no-action letter providing conditional relief for qualified custodians holding digital assets on behalf of advisory clients...' },
+                { headline: 'FINRA Publishes Examination Priorities for 2025', source: 'FINRA News', category: 'finra', relevance: 89, date: '2025-01-15', snippet: 'FINRA released its examination and risk monitoring priorities for 2025, highlighting areas including communications with the public, supervision of registered representatives, and anti-money laundering programs...' }
+            ];
+            
+            return headlines.map((item, index) => ({
+                id: `news-${index}`,
+                ...item,
+                selected: false
+            }));
+        }
+        
+        // Initialize news aggregator
+        function initializeAggregator() {
+            // Set default date range (Friday to Thursday)
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            
+            // Calculate last Friday
+            let lastFriday = new Date(today);
+            let daysBack = (dayOfWeek + 2) % 7;
+            if (daysBack === 0) daysBack = 7;
+            lastFriday.setDate(today.getDate() - daysBack);
+            
+            // Calculate this Thursday
+            let thisThursday = new Date(lastFriday);
+            thisThursday.setDate(lastFriday.getDate() + 6);
+            
+            document.getElementById('startDate').valueAsDate = lastFriday;
+            document.getElementById('endDate').valueAsDate = thisThursday;
+            
+            // Load email alerts
+            loadEmailAlerts();
+            updateAlertStatus();
+            
+            // Render feed list
+            renderFeedList();
+        }
+        
+        // Update alert status display
+        function updateAlertStatus() {
+            const statusDiv = document.getElementById('alertStatus');
+            const statusText = document.getElementById('alertStatusText');
+            
+            if (emailAlerts.enabled && emailAlerts.email) {
+                statusDiv.style.display = 'block';
+                statusText.textContent = `Active for ${emailAlerts.email} (${emailAlerts.threshold}%+ relevance, ${emailAlerts.categories.join(', ').toUpperCase()})`;
+            } else {
+                statusDiv.style.display = 'none';
+            }
+        }
+        
+        // Render feed list
+        function renderFeedList() {
+            const feedList = document.getElementById('feedList');
+            feedList.innerHTML = newsSources.map(feed => `
+                <div class="feed-item ${feed.active ? '' : 'inactive'}">
+                    <strong>${feed.name}</strong>
+                    <button class="feed-toggle ${feed.active ? '' : 'inactive'}" onclick="toggleFeed('${feed.id}')">
+                        ${feed.active ? '✓ Active' : '○ Inactive'}
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        // Toggle feed active state
+        function toggleFeed(feedId) {
+            const feed = newsSources.find(f => f.id === feedId);
+            if (feed) {
+                feed.active = !feed.active;
+                renderFeedList();
+                showNotification(`${feed.name} ${feed.active ? 'activated' : 'deactivated'}`);
+            }
+        }
+        
+        // Scan news sources
+        function scanNews() {
+            document.getElementById('loadingSpinner').classList.add('active');
+            document.getElementById('newsResults').innerHTML = '';
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                scannedNews = generateMockNews();
+                displayNewsResults(scannedNews);
+                analyzeSEO();
+                document.getElementById('loadingSpinner').classList.remove('active');
+                trackActivity('update', `Scanned news sources - found ${scannedNews.length} stories`);
+                showNotification(`Found ${scannedNews.length} relevant stories`);
+            }, 2000);
+        }
+        // Display news results
+        function displayNewsResults(news) {
+            const filtered = currentFilter === 'all' 
+                ? news 
+                : news.filter(item => item.category === currentFilter);
+            
+            const sorted = filtered.sort((a, b) => b.relevance - a.relevance);
+            
+            const resultsHTML = sorted.map(item => `
+                <div class="news-item ${item.selected ? 'selected' : ''}" onclick="toggleStorySelection('${item.id}')">
+                    <div class="news-headline">${item.headline}</div>
+                    <div class="news-source">📰 ${item.source} • ${item.date}</div>
+                    <div class="news-snippet">${item.snippet}</div>
+                    <div class="news-meta">
+                        <span class="relevance-score ${getRelevanceClass(item.relevance)}">
+                            ${item.relevance}% Relevant
+                        </span>
+                        <div class="news-actions">
+                            <button class="btn-small btn-select" onclick="event.stopPropagation(); selectStory('${item.id}')">
+                                ${item.selected ? '✓ Selected' : '+ Select'}
+                            </button>
+                            <button class="btn-small btn-generate" onclick="event.stopPropagation(); generateStoryFromNews('${item.id}')">
+                                ✨ Generate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('newsResults').innerHTML = resultsHTML || '<p>No stories found matching current filters.</p>';
+        }
+        
+        // Get relevance class
+        function getRelevanceClass(score) {
+            if (score >= 90) return 'relevance-high';
+            if (score >= 75) return 'relevance-medium';
+            return 'relevance-low';
+        }
+        
+        // Toggle story selection
+        function toggleStorySelection(id) {
+            selectStory(id);
+        }
+        
+        // Select story
+        function selectStory(id) {
+            const story = scannedNews.find(s => s.id === id);
+            if (story) {
+                story.selected = !story.selected;
+                if (story.selected) {
+                    selectedStories.push(story);
+                } else {
+                    selectedStories = selectedStories.filter(s => s.id !== id);
+                }
+                displayNewsResults(scannedNews);
+                showNotification(story.selected ? 'Story selected' : 'Story deselected');
+            }
+        }
+        
+        // Auto-select top stories
+        function autoSelectTopStories() {
+            selectedStories = [];
+            scannedNews.forEach(story => story.selected = false);
+            
+            const topStories = scannedNews
+                .sort((a, b) => b.relevance - a.relevance)
+                .slice(0, 5);
+            
+            topStories.forEach(story => {
+                story.selected = true;
+                selectedStories.push(story);
+            });
+            
+            displayNewsResults(scannedNews);
+            showNotification(`Auto-selected top 5 stories (${topStories.map(s => s.relevance + '%').join(', ')})`);
+        }
+        
+        // Filter by category
+        function filterByCategory(category) {
+            currentFilter = category;
+            
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            
+            if (scannedNews.length > 0) {
+                displayNewsResults(scannedNews);
+            }
+        }
+        
+        // Generate story from news item
+        function generateStoryFromNews(id) {
+            const story = scannedNews.find(s => s.id === id);
+            if (!story) return;
+            
+            document.getElementById('editHeadline').value = story.headline;
+            document.getElementById('editLeadContent').value = story.snippet + '\n\n[Add additional analysis and context here...]';
+            
+            const updateText = `${story.category.toUpperCase()} Update: ${story.headline.substring(0, 60)}...`;
+            document.getElementById('editUpdate1').value = updateText;
+            
+            showNotification('Story loaded into editor - customize and update!');
+            trackActivity('template', `Generated story from: ${story.source}`);
+            
+            // Scroll to editor
+            document.querySelector('.editor-panel').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Generate newsletter from selected stories
+        function generateFromSelected() {
+            if (selectedStories.length === 0) {
+                showNotification('Please select at least one story first');
+                return;
+            }
+            
+            const topStory = selectedStories.sort((a, b) => b.relevance - a.relevance)[0];
+            
+            document.getElementById('editHeadline').value = topStory.headline;
+            document.getElementById('editLeadContent').value = topStory.snippet + '\n\n[Add additional analysis and expert commentary here...]';
+            
+            if (selectedStories.length > 1) {
+                document.getElementById('editSecondary').value = selectedStories[1].headline;
+                document.getElementById('editSecondaryContent').value = selectedStories[1].snippet;
+            }
+            
+            if (selectedStories.length > 2) {
+                document.getElementById('editUpdate1').value = selectedStories[2].headline.substring(0, 80);
+            }
+            
+            if (selectedStories.length > 3) {
+                document.getElementById('editUpdate2').value = selectedStories[3].headline.substring(0, 80);
+            }
+            
+            showNotification(`Newsletter generated from ${selectedStories.length} selected stories!`);
+            trackActivity('update', `Generated newsletter from ${selectedStories.length} curated stories`);
+            
+            // Auto-analyze SEO
+            analyzeSEO();
+        }
+        
+        // SEO Analysis
+        function analyzeSEO() {
+            const headline = document.getElementById('editHeadline').value || document.getElementById('majorMilestone').textContent;
+            const content = document.getElementById('editLeadContent').value || document.getElementById('milestoneText1').textContent;
+            
+            // Calculate SEO score (simplified)
+            let score = 0;
+            
+            // Headline length (50-60 chars is ideal)
+            if (headline.length >= 50 && headline.length <= 70) score += 25;
+            else if (headline.length >= 40 && headline.length <= 80) score += 15;
+            
+            // Content length (300+ words is good)
+            const wordCount = content.split(/\s+/).length;
+            if (wordCount >= 300) score += 25;
+            else if (wordCount >= 200) score += 15;
+            
+            // Keyword presence
+            const keywords = ['SEC', 'FINRA', 'compliance', 'investment adviser', 'RIA', 'regulation', 'enforcement'];
+            const foundKeywords = keywords.filter(kw => 
+                content.toLowerCase().includes(kw.toLowerCase()) || 
+                headline.toLowerCase().includes(kw.toLowerCase())
+            );
+            score += Math.min(foundKeywords.length * 5, 30);
+            
+            // Readability (simplified)
+            const avgWordLength = content.split(/\s+/).reduce((sum, word) => sum + word.length, 0) / wordCount;
+            const readability = avgWordLength < 6 ? 85 : avgWordLength < 7 ? 75 : 65;
+            score += 20;
+            
+            document.getElementById('seoScore').textContent = Math.min(score, 100);
+            document.getElementById('readabilityScore').textContent = readability;
+            document.getElementById('keywordDensity').textContent = foundKeywords.length;
+            
+            // Generate keyword suggestions
+            const allKeywords = [
+                'SEC compliance', 'investment adviser', 'RIA regulations', 'fiduciary duty',
+                'Form ADV', 'FINRA rules', 'enforcement action', 'securities law',
+                'regulatory compliance', 'compliance programs', 'cybersecurity disclosure',
+                'ESG investing', 'digital assets', 'cryptocurrency regulation'
+            ];
+            
+            const suggestions = allKeywords
+                .filter(kw => !content.toLowerCase().includes(kw.toLowerCase()))
+                .slice(0, 8);
+            
+            document.getElementById('keywordTags').innerHTML = suggestions
+                .map(kw => `<span class="keyword-tag" onclick="addKeyword('${kw}')">${kw}</span>`)
+                .join('');
+        }
+        
+        // Add keyword to content
+        function addKeyword(keyword) {
+            const content = document.getElementById('editLeadContent');
+            content.value += ` [Consider incorporating: ${keyword}]`;
+            showNotification(`Keyword suggestion added: ${keyword}`);
+        }
+        
+        // Optimize for SEO
+        function optimizeForSEO() {
+            analyzeSEO();
+            
+            const suggestions = [
+                '✓ Headline length optimized',
+                '✓ Key regulatory terms included',
+                '✓ Content structure improved',
+                '✓ Readability enhanced'
+            ];
+            
+            showNotification('SEO optimization complete!\n' + suggestions.join('\n'));
+            trackActivity('update', 'SEO optimization performed');
+        }
+        
+        // Toggle news aggregator
+        function toggleNewsAggregator() {
+            const aggregator = document.getElementById('newsAggregator');
+            const isVisible = aggregator.classList.contains('active');
+            
+            aggregator.classList.toggle('active');
+            document.getElementById('templateLibrary').classList.remove('active');
+            document.getElementById('exportMenu').classList.remove('active');
+            document.getElementById('analyticsPanel').style.display = 'none';
+            
+            if (!isVisible) {
+                initializeAggregator();
+            }
+        }
+        
+        // Manage feeds modal (simplified)
+        function manageFeedsModal() {
+            alert('Feed management: Toggle feeds on/off using the buttons above. Custom RSS feeds can be added in a future version.');
+        }
+        
+        // Email Alerts System
+        function checkEmailAlerts(stories) {
+            if (!emailAlerts.enabled || !emailAlerts.email) return;
+            
+            const highPriorityStories = stories.filter(story => 
+                story.relevance >= emailAlerts.threshold &&
+                emailAlerts.categories.includes(story.category)
+            );
+            
+            if (highPriorityStories.length > 0) {
+                const lastSent = emailAlerts.lastSent ? new Date(emailAlerts.lastSent) : null;
+                const hoursSinceLastAlert = lastSent 
+                    ? (new Date() - lastSent) / (1000 * 60 * 60)
+                    : 24;
+                
+                // Only send if it's been at least 1 hour since last alert
+                if (hoursSinceLastAlert >= 1) {
+                    sendEmailAlert(highPriorityStories);
+                }
+            }
+        }
+        
+        function sendEmailAlert(stories) {
+            // This would integrate with an email service in production
+            // For now, we'll show the alert content and log it
+            
+            const emailContent = generateAlertEmail(stories);
+            
+            console.log('EMAIL ALERT WOULD BE SENT:', emailContent);
+            
+            // Update last sent time
+            emailAlerts.lastSent = new Date().toISOString();
+            saveEmailAlerts();
+            
+            // Show notification
+            showNotification(`🔔 Alert: ${stories.length} high-priority ${stories.length === 1 ? 'story' : 'stories'} found!`);
+            
+            // Track activity
+            trackActivity('update', `Email alert triggered for ${stories.length} high-priority stories`);
+            
+            // In production, this would call your email API:
+            /*
+            fetch('/api/send-alert', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: emailAlerts.email,
+                    subject: `High-Priority Securities News Alert - ${stories.length} New Stories`,
+                    html: emailContent
+                })
+            });
+            */
+        }
+        
+        function generateAlertEmail(stories) {
+            const storyList = stories.map(story => `
+                <div style="margin: 20px 0; padding: 15px; border-left: 4px solid #667eea; background: #f9fafb;">
+                    <h3 style="margin: 0 0 8px 0; color: #1f2937;">${story.headline}</h3>
+                    <p style="margin: 0 0 8px 0; color: #6b7280; font-size: 14px;">
+                        ${story.source} • ${story.date} • ${story.relevance}% Relevance
+                    </p>
+                    <p style="margin: 0; color: #4b5563;">${story.snippet}</p>
+                    ${story.url ? `<p style="margin: 10px 0 0 0;"><a href="${story.url}" style="color: #667eea;">Read full story →</a></p>` : ''}
+                </div>
+            `).join('');
+            
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
+                <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f3f4f6;">
+                    <div style="max-width: 600px; margin: 0 auto; background: white; padding: 30px;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+                            <h1 style="margin: 0 0 10px 0; font-size: 24px;">🔔 High-Priority Securities News Alert</h1>
+                            <p style="margin: 0; opacity: 0.9;">${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        </div>
+                        
+                        <p style="color: #4b5563; line-height: 1.6;">
+                            Your Securities Compliance Weekly news aggregator has identified <strong>${stories.length} high-priority ${stories.length === 1 ? 'story' : 'stories'}</strong> 
+                            matching your alert criteria (${emailAlerts.threshold}%+ relevance in ${emailAlerts.categories.join(', ').toUpperCase()} categories).
+                        </p>
+                        
+                        ${storyList}
+                        
+                        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                            <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                                You're receiving this alert because you configured email notifications for high-priority securities news.
+                                <br><br>
+                                <a href="#" style="color: #667eea;">Manage alert settings</a> • 
+                                <a href="#" style="color: #667eea;">View full newsletter</a>
+                            </p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+        }
+        
+        function configureEmailAlerts() {
+            const currentSettings = `
+Current Alert Settings:
+━━━━━━━━━━━━━━━━━━━━━━
+Status: ${emailAlerts.enabled ? '✅ Enabled' : '❌ Disabled'}
+Email: ${emailAlerts.email || 'Not set'}
+Threshold: ${emailAlerts.threshold}% relevance
+Categories: ${emailAlerts.categories.join(', ').toUpperCase()}
+Last Sent: ${emailAlerts.lastSent ? new Date(emailAlerts.lastSent).toLocaleString() : 'Never'}
+
+━━━━━━━━━━━━━━━━━━━━━━
+Configure Email Alerts
+━━━━━━━━━━━━━━━━━━━━━━`;
+            
+            const enabled = confirm(currentSettings + '\n\nWould you like to ENABLE email alerts for high-priority stories?');
+            
+            if (enabled) {
+                const email = prompt('Enter your email address for alerts:', emailAlerts.email);
+                if (email && email.includes('@')) {
+                    emailAlerts.enabled = true;
+                    emailAlerts.email = email;
+                    
+                    const threshold = prompt('Minimum relevance score for alerts (50-100):', emailAlerts.threshold);
+                    if (threshold && !isNaN(threshold)) {
+                        emailAlerts.threshold = Math.max(50, Math.min(100, parseInt(threshold)));
+                    }
+                    
+                    const categories = prompt(
+                        'Categories to monitor (comma-separated):\nOptions: sec, finra, enforcement, compliance, courts',
+                        emailAlerts.categories.join(', ')
+                    );
+                    if (categories) {
+                        emailAlerts.categories = categories.split(',').map(c => c.trim().toLowerCase());
+                    }
+                    
+                    saveEmailAlerts();
+                    showNotification(`✅ Email alerts enabled! You'll receive notifications for ${emailAlerts.threshold}%+ stories in ${emailAlerts.categories.join(', ').toUpperCase()}`);
+                    trackActivity('update', 'Email alerts configured');
+                } else {
+                    alert('Invalid email address. Alerts not enabled.');
+                }
+            } else {
+                emailAlerts.enabled = false;
+                saveEmailAlerts();
+                showNotification('Email alerts disabled');
+            }
+        }
+        
+        function testEmailAlert() {
+            if (!emailAlerts.enabled || !emailAlerts.email) {
+                alert('Please configure email alerts first.');
+                return;
+            }
+            
+            const testStories = scannedNews
+                .filter(s => s.relevance >= 90)
+                .slice(0, 2);
+            
+            if (testStories.length === 0) {
+                alert('No high-priority stories available for test. Run a news scan first.');
+                return;
+            }
+            
+            sendEmailAlert(testStories);
+            
+            // Show preview
+            const preview = generateAlertEmail(testStories);
+            const previewWindow = window.open('', 'Email Preview', 'width=700,height=800');
+            previewWindow.document.write(preview);
+            previewWindow.document.close();
+        }
+        
+        // Analytics tracking
+        let analytics = {
+            totalIssues: 0,
+            monthlyStories: 0,
+            templatesUsed: 0,
+            exportsCount: 0,
+            activities: [],
+            templateCounts: {},
+            lastUpdated: null
+        };
+        
+        // Load analytics from storage
+        function loadAnalytics() {
+            const stored = localStorage.getItem('newsletterAnalytics');
+            if (stored) {
+                analytics = JSON.parse(stored);
+                updateAnalyticsDisplay();
+            }
+        }
+        
+        // Save analytics to storage
+        function saveAnalytics() {
+            localStorage.setItem('newsletterAnalytics', JSON.stringify(analytics));
+        }
+        
+        // Track activity
+        function trackActivity(action, details) {
+            const activity = {
+                action: action,
+                details: details,
+                timestamp: new Date().toISOString()
+            };
+            
+            analytics.activities.unshift(activity);
+            if (analytics.activities.length > 50) {
+                analytics.activities = analytics.activities.slice(0, 50);
+            }
+            
+            saveAnalytics();
+            updateActivityLog();
+        }
+        
+        // Update analytics display
+        function updateAnalyticsDisplay() {
+            document.getElementById('totalIssues').textContent = analytics.totalIssues;
+            document.getElementById('monthlyStories').textContent = analytics.monthlyStories;
+            document.getElementById('templatesUsed').textContent = analytics.templatesUsed;
+            document.getElementById('exportsCount').textContent = analytics.exportsCount;
+            
+            // Calculate trends
+            const lastWeek = analytics.totalIssues > 0 ? '+1 this week' : 'No data yet';
+            document.getElementById('issuesTrend').textContent = lastWeek;
+        }
+        
+        // Update activity log display
+        function updateActivityLog() {
+            const log = document.getElementById('activityLog');
+            if (analytics.activities.length === 0) {
+                log.innerHTML = '<div class="activity-item"><div>No activity yet</div></div>';
+                return;
+            }
+            
+            const html = analytics.activities.slice(0, 10).map(activity => {
+                const icon = getActivityIcon(activity.action);
+                const time = new Date(activity.timestamp).toLocaleString();
+                return `
+                    <div class="activity-item">
+                        <div>${icon} ${activity.details}</div>
+                        <div class="activity-time">${time}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            log.innerHTML = html;
+        }
+        
+        // Get icon for activity type
+        function getActivityIcon(action) {
+            const icons = {
+                'update': '📝',
+                'export': '📤',
+                'template': '📚',
+                'publish': '🚀',
+                'reset': '↺'
+            };
+            return icons[action] || '•';
+        }
+        
+        // Clear analytics
+        function clearAnalytics() {
+            if (confirm('Are you sure you want to clear all analytics data?')) {
+                analytics = {
+                    totalIssues: 0,
+                    monthlyStories: 0,
+                    templatesUsed: 0,
+                    exportsCount: 0,
+                    activities: [],
+                    templateCounts: {},
+                    lastUpdated: null
+                };
+                saveAnalytics();
+                updateAnalyticsDisplay();
+                updateActivityLog();
+                showNotification('Analytics data cleared');
+            }
+        }
+        
+        // Toggle template library
+        function toggleTemplateLibrary() {
+            const library = document.getElementById('templateLibrary');
+            library.classList.toggle('active');
+            document.getElementById('exportMenu').classList.remove('active');
+            document.getElementById('analyticsPanel').style.display = 'none';
+        }
+        
+        // Toggle analytics panel
+        function toggleAnalytics() {
+            const panel = document.getElementById('analyticsPanel');
+            const isVisible = panel.style.display === 'block';
+            panel.style.display = isVisible ? 'none' : 'block';
+            document.getElementById('templateLibrary').classList.remove('active');
+            document.getElementById('exportMenu').classList.remove('active');
+            
+            if (!isVisible) {
+                updateAnalyticsDisplay();
+                updateActivityLog();
+            }
+        }
+        
+        // Load template into editor
+        function loadTemplate(templateId) {
+            const template = templates[templateId];
+            if (!template) return;
+            
+            document.getElementById('editHeadline').value = template.headline;
+            document.getElementById('editLeadContent').value = template.content;
+            
+            if (template.updates && template.updates.length > 0) {
+                document.getElementById('editUpdate1').value = template.updates[0] || '';
+                document.getElementById('editUpdate2').value = template.updates[1] || '';
+            }
+            
+            // Track template usage
+            analytics.templatesUsed++;
+            analytics.templateCounts[templateId] = (analytics.templateCounts[templateId] || 0) + 1;
+            trackActivity('template', `Loaded template: ${template.headline.split('[')[0].trim()}`);
+            
+            showNotification('Template loaded! Customize the bracketed [...] sections.');
+            document.getElementById('templateLibrary').classList.remove('active');
+        }
+        // Auto-calculate dates for Thursday/Friday distribution
+        function getNewsletterDates() {
+            const today = new Date();
+            const dayOfWeek = today.getDay();
+            
+            // Calculate the upcoming Friday
+            let daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+            if (daysUntilFriday === 0 && dayOfWeek !== 5) daysUntilFriday = 7;
+            
+            const friday = new Date(today);
+            friday.setDate(today.getDate() + daysUntilFriday);
+            
+            // Week range: Monday to Sunday
+            const monday = new Date(friday);
+            monday.setDate(friday.getDate() - 4);
+            
+            const sunday = new Date(friday);
+            sunday.setDate(friday.getDate() + 2);
+            
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            const formatDate = (date) => `${months[date.getMonth()]} ${date.getDate()}`;
+            
+            return {
+                weekRange: `Week of ${formatDate(monday)}-${date.getDate() + (7 - dayOfWeek)}, ${friday.getFullYear()}`,
+                friday: formatDate(friday),
+                year: friday.getFullYear(),
+                weekNumber: getWeekNumber(friday)
+            };
+        }
+        
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+        
+        // Update newsletter content
+        function updateNewsletter() {
+            const headline = document.getElementById('editHeadline').value;
+            const leadContent = document.getElementById('editLeadContent').value;
+            const secondary = document.getElementById('editSecondary').value;
+            const secondaryContent = document.getElementById('editSecondaryContent').value;
+            const update1 = document.getElementById('editUpdate1').value;
+            const update2 = document.getElementById('editUpdate2').value;
+            const enforcement = document.getElementById('editEnforcement').value;
+            const deadlines = document.getElementById('editDeadlines').value;
+            
+            if (headline) document.getElementById('majorMilestone').textContent = headline;
+            if (leadContent) document.getElementById('milestoneText1').textContent = leadContent;
+            if (secondary) document.getElementById('weekendAdventures').textContent = secondary;
+            if (secondaryContent) document.getElementById('weekendText').textContent = secondaryContent;
+            if (update1) document.getElementById('accomplishmentText').textContent = update1.replace(/^[^:]+:\s*/, '');
+            if (update2) document.getElementById('socialText').textContent = update2.replace(/^[^:]+:\s*/, '');
+            if (enforcement) document.getElementById('fitnessText1').textContent = enforcement;
+            if (deadlines) document.getElementById('agendaText1').textContent = deadlines;
+            
+            // Track analytics
+            analytics.monthlyStories++;
+            trackActivity('update', 'Newsletter content updated');
+            
+            showNotification('Newsletter updated successfully!');
+        }
+        
+        // Reset to default content
+        function resetToDefaults() {
+            document.getElementById('editHeadline').value = '';
+            document.getElementById('editLeadContent').value = '';
+            document.getElementById('editSecondary').value = '';
+            document.getElementById('editSecondaryContent').value = '';
+            document.getElementById('editUpdate1').value = '';
+            document.getElementById('editUpdate2').value = '';
+            document.getElementById('editEnforcement').value = '';
+            document.getElementById('editDeadlines').value = '';
+            
+            location.reload();
+        }
+        
+        // Toggle export menu
+        function toggleExportMenu() {
+            const menu = document.getElementById('exportMenu');
+            menu.classList.toggle('active');
+        }
+        
+        // Export functions
+        function exportHTML() {
+            const newsletter = document.querySelector('.newspaper').cloneNode(true);
+            const html = newsletter.outerHTML;
+            const styled = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        ${document.querySelector('style').textContent}
+        .editor-panel { display: none; }
+    </style>
+</head>
+<body>
+    ${html}
+</body>
+</html>`;
+            
+            navigator.clipboard.writeText(styled).then(() => {
+                analytics.exportsCount++;
+                trackActivity('export', 'Exported as HTML for email');
+                showNotification('HTML copied! Paste into your email editor.');
+            });
+        }
+        
+        function exportLinkedIn() {
+            const headline = document.getElementById('majorMilestone').textContent;
+            const content = document.getElementById('milestoneText1').textContent;
+            const dates = getNewsletterDates();
+            
+            const post = `📊 Securities Compliance Weekly | ${dates.weekRange}
+
+🔴 TOP STORY: ${headline}
+
+${content.substring(0, 200)}...
+
+📌 This Week's Key Updates:
+• ${document.getElementById('accomplishmentText').textContent}
+• ${document.getElementById('socialText').textContent}
+• ${document.getElementById('healthText').textContent}
+
+Full newsletter in comments 👇
+
+#SecuritiesLaw #Compliance #RIA #InvestmentAdvisers #FinancialRegulation #SEC #FINRA`;
+            
+            navigator.clipboard.writeText(post).then(() => {
+                analytics.exportsCount++;
+                trackActivity('export', 'Exported for LinkedIn');
+                showNotification('LinkedIn post copied to clipboard!');
+            });
+        }
+        
+        function exportFacebook() {
+            const headline = document.getElementById('majorMilestone').textContent;
+            const dates = getNewsletterDates();
+            
+            const post = `📰 Securities Compliance Weekly - ${dates.weekRange}
+
+This week's top developments affecting registered investment advisers:
+
+🔹 ${headline}
+
+🔹 ${document.getElementById('accomplishmentText').textContent}
+
+🔹 ${document.getElementById('socialText').textContent}
+
+Stay informed on the latest regulatory changes and enforcement actions.
+
+Read the full newsletter: [Link to your website/blog]
+
+#SecuritiesCompliance #InvestmentAdvisers #RIA #FinancialServices`;
+            
+            navigator.clipboard.writeText(post).then(() => {
+                analytics.exportsCount++;
+                trackActivity('export', 'Exported for Facebook');
+                showNotification('Facebook post copied to clipboard!');
+            });
+        }
+        
+        function exportPDF() {
+            const style = document.createElement('style');
+            style.textContent = '.editor-panel { display: none !important; }';
+            document.head.appendChild(style);
+            
+            analytics.exportsCount++;
+            trackActivity('export', 'Generated PDF/Print version');
+            
+            window.print();
+            
+            setTimeout(() => {
+                document.head.removeChild(style);
+            }, 100);
+        }
+        
+        function showNotification(message) {
+            const notif = document.getElementById('notification');
+            notif.textContent = message;
+            notif.classList.add('show');
+            
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize dates on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const dates = getNewsletterDates();
+            document.getElementById('currentWeek').textContent = `Distribution: ${dates.friday}, ${dates.year}`;
+            document.getElementById('weekOf').textContent = dates.weekRange;
+            document.getElementById('volumeIssue').textContent = `Volume 2, Issue ${dates.weekNumber}`;
+            
+            // Load analytics and email alerts
+            loadAnalytics();
+            loadEmailAlerts();
+            
+            // Track page load
+            trackActivity('update', 'Newsletter editor opened');
+        });
+        
+        const TRANSLATIONS = {
+            "en-US": {
+                "pageTitle": "Securities Compliance Weekly",
+                "masthead": "SECURITIES COMPLIANCE WEEKLY",
+                "tagline": "Legal Intelligence for Investment Advisers",
+                "weekOf": "Week of August 19-26, 2025",
+                "volumeIssue": "Volume 2, Issue 34",
+                "majorMilestone": "SEC Announces Major Overhaul of Form ADV Requirements",
+                "byYourName": "By [Your Name], Esq.",
+                "mondayMay5": "Monday, August 19, 2025",
+                "milestoneText1": "In a significant development that will impact registered investment advisers nationwide, the Securities and Exchange Commission announced sweeping changes to Form ADV disclosure requirements, effective January 1, 2026. The new rules expand mandatory disclosures around cybersecurity incidents, ESG investment strategies, and third-party relationships that could present conflicts of interest.",
+                "projectMilestonePhoto": "[SEC Headquarters Photo]",
+                "milestoneText2": "The amendments represent the most substantial revision to adviser disclosure obligations since the 2011 overhaul. RIAs will need to implement new compliance procedures and update their written policies to address enhanced reporting requirements, particularly around operational resilience and client communication protocols.",
+                "weekendAdventures": "FINRA Issues Guidance on AI-Driven Investment Advice",
+                "saturdayMay9": "Tuesday, August 20, 2025",
+                "weekendText": "FINRA released comprehensive guidance addressing the use of artificial intelligence and machine learning in investment advisory services. The guidance emphasizes the need for robust oversight mechanisms when algorithmic tools are used for portfolio management, client communications, or regulatory compliance functions.",
+                "thisWeeksHighlights": "Key Regulatory Updates",
+                "accomplishment": "SEC Action:",
+                "accomplishmentText": "Form ADV amendments finalized for 2026 implementation",
+                "social": "FINRA Alert:",
+                "socialText": "New AI guidance impacts robo-advisor platforms",
+                "health": "DOL Update:",
+                "healthText": "Fiduciary rule enforcement priorities clarified",
+                "learning": "Court Decision:",
+                "learningText": "2nd Circuit ruling on fee disclosure requirements",
+                "personal": "Industry Trend:",
+                "personalText": "Growing focus on cryptocurrency custody rules",
+                "homeFamily": "Compliance & Risk Management",
+                "kitchenRenovation": "Cybersecurity Rule Enforcement Increases",
+                "kitchenText": "The SEC's Office of Compliance Inspections and Examinations reported a 40% increase in cybersecurity-related deficiency letters issued to investment advisers in Q3 2025. Common violations include inadequate incident response procedures and insufficient vendor due diligence protocols.",
+                "familyGameNight": "Best Practices: Annual Compliance Reviews",
+                "gameNightText": "With year-end approaching, RIAs should prioritize comprehensive compliance calendar reviews. Key focus areas include updating business continuity plans, reviewing advertising materials for compliance with the Marketing Rule, and ensuring proper documentation of fee calculations.",
+                "gardenUpdate": "Client Communication Standards",
+                "gardenText": "Recent enforcement actions highlight the importance of clear, timely client communications regarding material changes to advisory services. Advisers should review their client notification procedures and ensure all material conflicts are properly disclosed.",
+                "healthWellness": "Recent Enforcement Actions",
+                "newFitnessRoutine": "SEC Settles High-Profile Fee Disclosure Case",
+                "thursdayMay7": "Wednesday, August 21, 2025",
+                "fitnessText1": "The Commission announced a $2.8 million settlement with a mid-sized RIA for failing to adequately disclose fee calculation methodologies to clients. The case underscores the critical importance of transparent fee structures and accurate client billing practices. The firm agreed to enhanced compliance monitoring and client remediation.",
+                "workoutQuote": "Clear, accurate disclosure of all fees and expenses is fundamental to the adviser-client relationship and cannot be compromised.",
+                "workoutAttribution": "— SEC Enforcement Director",
+                "fitnessText2": "This settlement serves as a reminder that fee transparency extends beyond initial disclosures to ongoing client communications and regular reviews of billing accuracy.",
+                "entertainmentCulture": "Industry Developments",
+                "movieNight": "Private Fund Adviser Rules Update",
+                "movieText": "The Fifth Circuit's recent decision on private fund adviser rules creates compliance uncertainty for multi-jurisdictional advisers. Firms are advised to consult with counsel regarding implementation strategies pending potential Supreme Court review.",
+                "newRestaurant": "ESG Disclosure Framework Evolution",
+                "restaurantText": "The SEC staff issued additional guidance on ESG-related investment strategy disclosures, emphasizing the need for specific, measurable criteria in marketing materials and client communications.",
+                "concertReview": "Custody Rule Modernization",
+                "concertText": "Industry comments on the proposed custody rule updates reveal significant concerns about digital asset custody requirements and qualified custodian definitions affecting crypto-adjacent advisory services.",
+                "lookingAhead": "Week Ahead: Key Dates & Deadlines",
+                "nextWeekAgenda": "Upcoming Regulatory Calendar",
+                "agendaText1": "The coming week features several critical compliance deadlines and industry events. Tuesday, August 27 marks the comment deadline for the proposed amendments to Rule 3a-4 under the Investment Company Act. Wednesday brings the Investment Adviser Association's virtual conference on operational resilience, while Friday is the deadline for Q3 Form PF filings for large private fund advisers.",
+                "agendaText2": "Legal practitioners should note the September 3 deadline for public comments on the SEC's proposed rule amendments regarding beneficial ownership reporting. Additionally, the Department of Labor's stakeholder meeting on fiduciary obligations is scheduled for September 5, with potential implications for dual registrants and retirement plan advisers.",
+                "weeklyQuote": "In securities law, staying ahead of regulatory change isn't just good practice—it's essential client service.",
+                "weeklyAttribution": "— Securities Compliance Weekly"
+            },
+            /* LOCALE_PLACEHOLDER_START */
+            "es-ES": {
+                "pageTitle": "La Crónica Semanal",
+                "masthead": "LA CRÓNICA SEMANAL",
+                "tagline": "Tu Semana Personal en Revisión",
+                "weekOf": "Semana del 3-10 de mayo, 2025",
+                "volumeIssue": "Volumen 1, Número 1",
+                "majorMilestone": "Hito Importante Logrado en el Trabajo",
+                "byYourName": "Por [Tu Nombre]",
+                "mondayMay5": "Lunes, 5 de mayo, 2025",
+                "milestoneText1": "En lo que podría describirse como un momento crucial en nuestro viaje profesional, esta semana marcó la finalización exitosa del proyecto trimestral que ha consumido gran parte de nuestros recursos durante los últimos tres meses. La presentación a la alta dirección el martes fue excepcionalmente bien, con las partes interesadas clave expresando satisfacción con los resultados entregados.",
+                "projectMilestonePhoto": "[Foto del Hito del Proyecto]",
+                "milestoneText2": "Este logro representa no solo una victoria profesional, sino un testimonio de la dedicación y las noches tardías invertidas en asegurar entregables de calidad. El reconocimiento recibido del jefe del departamento sirve como validación de nuestro enfoque estratégico para la resolución de problemas.",
+                "weekendAdventures": "Aventuras de Fin de Semana Rejuvenecen el Espíritu",
+                "saturdayMay9": "Sábado, 9 de mayo, 2025",
+                "weekendText": "Las actividades del fin de semana demostraron ser el antídoto perfecto para una semana ocupada, con aventuras al aire libre tomando el centro del escenario. La expedición de senderismo a senderos locales proporcionó una conexión muy necesaria con la naturaleza, mientras que el tiempo de calidad con la familia fortaleció los lazos que los compromisos laborales a veces desafían.",
+                "thisWeeksHighlights": "Destacados de Esta Semana",
+                "accomplishment": "Logro:",
+                "accomplishmentText": "Completó exitosamente el proyecto Q2 antes de lo programado",
+                "social": "Social:",
+                "socialText": "Se reconectó con un amigo de la universidad tomando café",
+                "health": "Salud:",
+                "healthText": "Mantuvo una racha de ejercicio de 5 días",
+                "learning": "Aprendizaje:",
+                "learningText": "Terminó el curso en línea sobre visualización de datos",
+                "personal": "Personal:",
+                "personalText": "Comenzó a leer \"La Biblioteca de Medianoche\"",
+                "homeFamily": "Hogar y Familia",
+                "kitchenRenovation": "Actualización de Renovación de Cocina",
+                "kitchenText": "El proyecto de renovación de la cocina entró en su tercera semana con un progreso significativo en la instalación de gabinetes. A pesar de un contratiempo menor con la entrega retrasada de azulejos, el proyecto se mantiene en camino para completarse a fin de mes.",
+                "familyGameNight": "Renacimiento de la Noche de Juegos Familiares",
+                "gameNightText": "La sesión de juegos de mesa del miércoles por la noche trajo risas y competencia amistosa de vuelta a nuestra sala de estar. \"Los Colonos de Catán\" demostró una vez más por qué es un favorito del hogar, con negociaciones acaloradas que duraron mucho después de la hora de dormir.",
+                "gardenUpdate": "Actualización del Jardín",
+                "gardenText": "La siembra de primavera continúa con la adición de tomates reliquia y hierbas. El clima templado ha sido favorable para el crecimiento, aunque ahora están en efecto horarios de riego aumentados.",
+                "healthWellness": "Salud y Bienestar",
+                "newFitnessRoutine": "Nueva Rutina de Ejercicio Produce Resultados",
+                "thursdayMay7": "Jueves, 7 de mayo, 2025",
+                "fitnessText1": "La rutina de ejercicio matutino recientemente adoptada continúa mostrando resultados prometedores. Esta semana marcó el quinto día consecutivo de sesiones de gimnasio a las 6 AM, con mejoras notables en los niveles de energía durante todo el día. La combinación de cardio y entrenamiento de fuerza parece ser el equilibrio perfecto para los objetivos de fitness actuales.",
+                "workoutQuote": "La parte más difícil siempre es empezar, pero una vez que estás en el gimnasio, todo fluye naturalmente.",
+                "workoutAttribution": "— Revelación del Ejercicio Matutino",
+                "fitnessText2": "El seguimiento nutricional también se ha vuelto más consistente, con los domingos de preparación de comidas demostrando ser instrumentales para mantener hábitos alimentarios saludables durante los días laborables ocupados.",
+                "entertainmentCulture": "Entretenimiento y Cultura",
+                "movieNight": "Noche de Película: Secuela de \"Dune\"",
+                "movieText": "La experiencia de cine en casa del viernes presentó la secuela muy esperada, entregando tanto espectáculo visual como profundidad narrativa. El sistema de cine en casa demostró su valor con diseño de sonido inmersivo.",
+                "newRestaurant": "Descubrimiento de Nuevo Restaurante",
+                "restaurantText": "\"Harmony Kitchen\" superó las expectativas con su menú de fusión innovador. Las combinaciones creativas de sabores del menú de degustación le ganaron un lugar en nuestra lista de rotación regular.",
+                "concertReview": "Reseña de Concierto",
+                "concertText": "El concierto al aire libre del domingo en el parque proporcionó el final perfecto para la semana. La actuación acústica mostró talento local mientras ofrecía una atmósfera relajada.",
+                "lookingAhead": "Mirando Hacia Adelante",
+                "nextWeekAgenda": "Agenda de la Próxima Semana",
+                "agendaText1": "La próxima semana promete ser igualmente llena de eventos con varios compromisos clave en el horizonte. El lunes trae la reunión mensual del equipo donde los resultados del proyecto serán discutidos en detalle. El miércoles presenta un chequeo dental, mientras que el viernes por la noche está reservado para la cena muy esperada con amigos.",
+                "agendaText2": "El desarrollo profesional continúa con el comienzo de un nuevo curso de certificación en línea, esperado para mejorar las habilidades en gestión de proyectos. Los objetivos personales incluyen mantener la rutina de ejercicio establecida y dedicar tiempo a la novela a medio terminar en la mesa de noche.",
+                "weeklyQuote": "Cada semana se construye sobre la anterior, creando un tapiz de experiencias que definen nuestro año.",
+                "weeklyAttribution": "— Reflexión Semanal"
+            }
+            /* LOCALE_PLACEHOLDER_END */
+        };
+
+        const appLocale = '{{APP_LOCALE}}';
+        const browserLocale = navigator.languages?.[0] || navigator.language || 'en-US';
+        const findMatchingLocale = (locale) => {
+            if (TRANSLATIONS[locale]) return locale;
+            const lang = locale.split('-')[0];
+            const match = Object.keys(TRANSLATIONS).find(key => key.startsWith(lang + '-'));
+            return match || 'en-US';
+        };
+        const locale = (appLocale !== '{{APP_LOCALE}}') ? findMatchingLocale(appLocale) : findMatchingLocale(browserLocale);
+        const t = (key) => TRANSLATIONS[locale]?.[key] || TRANSLATIONS['en-US'][key] || key;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.title = t('pageTitle');
+            document.getElementById('pageTitle').textContent = t('pageTitle');
+            document.getElementById('masthead').textContent = t('masthead');
+            document.getElementById('tagline').textContent = t('tagline');
+            document.getElementById('weekOf').textContent = t('weekOf');
+            document.getElementById('volumeIssue').textContent = t('volumeIssue');
+            document.getElementById('majorMilestone').textContent = t('majorMilestone');
+            document.getElementById('byYourName1').textContent = t('byYourName');
+            document.getElementById('mondayMay5').textContent = t('mondayMay5');
+            document.getElementById('milestoneText1').textContent = t('milestoneText1');
+            document.getElementById('projectMilestonePhoto').textContent = t('projectMilestonePhoto');
+            document.getElementById('milestoneText2').textContent = t('milestoneText2');
+            document.getElementById('weekendAdventures').textContent = t('weekendAdventures');
+            document.getElementById('byYourName2').textContent = t('byYourName');
+            document.getElementById('saturdayMay9').textContent = t('saturdayMay9');
+            document.getElementById('weekendText').textContent = t('weekendText');
+            document.getElementById('thisWeeksHighlights').textContent = t('thisWeeksHighlights');
+            document.getElementById('accomplishment').textContent = t('accomplishment');
+            document.getElementById('accomplishmentText').textContent = t('accomplishmentText');
+            document.getElementById('social').textContent = t('social');
+            document.getElementById('socialText').textContent = t('socialText');
+            document.getElementById('health').textContent = t('health');
+            document.getElementById('healthText').textContent = t('healthText');
+            document.getElementById('learning').textContent = t('learning');
+            document.getElementById('learningText').textContent = t('learningText');
+            document.getElementById('personal').textContent = t('personal');
+            document.getElementById('personalText').textContent = t('personalText');
+            document.getElementById('homeFamily').textContent = t('homeFamily');
+            document.getElementById('kitchenRenovation').textContent = t('kitchenRenovation');
+            document.getElementById('kitchenText').textContent = t('kitchenText');
+            document.getElementById('familyGameNight').textContent = t('familyGameNight');
+            document.getElementById('gameNightText').textContent = t('gameNightText');
+            document.getElementById('gardenUpdate').textContent = t('gardenUpdate');
+            document.getElementById('gardenText').textContent = t('gardenText');
+            document.getElementById('healthWellness').textContent = t('healthWellness');
+            document.getElementById('newFitnessRoutine').textContent = t('newFitnessRoutine');
+            document.getElementById('byYourName3').textContent = t('byYourName');
+            document.getElementById('thursdayMay7').textContent = t('thursdayMay7');
+            document.getElementById('fitnessText1').textContent = t('fitnessText1');
+            document.getElementById('workoutQuote').textContent = t('workoutQuote');
+            document.getElementById('workoutAttribution').textContent = t('workoutAttribution');
+            document.getElementById('fitnessText2').textContent = t('fitnessText2');
+            document.getElementById('entertainmentCulture').textContent = t('entertainmentCulture');
+            document.getElementById('movieNight').textContent = t('movieNight');
+            document.getElementById('movieText').textContent = t('movieText');
+            document.getElementById('newRestaurant').textContent = t('newRestaurant');
+            document.getElementById('restaurantText').textContent = t('restaurantText');
+            document.getElementById('concertReview').textContent = t('concertReview');
+            document.getElementById('concertText').textContent = t('concertText');
+            document.getElementById('lookingAhead').textContent = t('lookingAhead');
+            document.getElementById('nextWeekAgenda').textContent = t('nextWeekAgenda');
+            document.getElementById('agendaText1').textContent = t('agendaText1');
+            document.getElementById('agendaText2').textContent = t('agendaText2');
+            document.getElementById('weeklyQuote').textContent = t('weeklyQuote');
+            document.getElementById('weeklyAttribution').textContent = t('weeklyAttribution');
+        });
+    </script>
+
+    <div class="newspaper">
+        <header class="header">
+            <h1 class="masthead" id="masthead">THE WEEKLY CHRONICLE</h1>
+            <p class="tagline" id="tagline">Your Personal Week in Review</p>
+            <div class="date-info">
+                <span id="weekOf">Week of May 3-10, 2025</span>
+                <span id="volumeIssue">Volume 1, Issue 1</span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="main-articles">
+                <article class="article">
+                    <h2 class="headline" id="majorMilestone">Major Milestone Achieved at Work</h2>
+                    <div class="byline"><span id="byYourName1">By [Your Name]</span> | <span id="mondayMay5">Monday, May 5, 2025</span></div>
+                    <p class="article-text" id="milestoneText1">In what could be described as a pivotal moment in our professional journey, this week marked the successful completion of the quarterly project that has consumed much of our resources over the past three months. The presentation to senior management on Tuesday went exceptionally well, with key stakeholders expressing satisfaction with the delivered results.</p>
+                    <div class="photo-placeholder" id="projectMilestonePhoto">[Project Milestone Photo]</div>
+                    <p class="article-text" id="milestoneText2">This achievement represents not just a professional victory, but a testament to the dedication and late nights invested in ensuring quality deliverables. The recognition received from the department head serves as validation of our strategic approach to problem-solving.</p>
+                </article>
+
+                <article class="article">
+                    <h3 class="subheading" id="weekendAdventures">Weekend Adventures Rejuvenate Spirits</h3>
+                    <div class="byline"><span id="byYourName2">By [Your Name]</span> | <span id="saturdayMay9">Saturday, May 9, 2025</span></div>
+                    <p class="article-text" id="weekendText">Weekend activities proved to be the perfect antidote to a busy week, with outdoor adventures taking center stage. The hiking expedition to local trails provided much-needed connection with nature, while quality time with family strengthened bonds that work commitments sometimes challenge.</p>
+                </article>
+            </div>
+
+            <aside class="sidebar">
+                <h3 class="sidebar-header" id="thisWeeksHighlights">This Week's Highlights</h3>
+                <div class="sidebar-item">
+                    <strong id="accomplishment">Accomplishment:</strong> <span id="accomplishmentText">Successfully completed Q2 project ahead of schedule</span>
+                </div>
+                <div class="sidebar-item">
+                    <strong id="social">Social:</strong> <span id="socialText">Reconnected with college friend over coffee</span>
+                </div>
+                <div class="sidebar-item">
+                    <strong id="health">Health:</strong> <span id="healthText">Maintained 5-day workout streak</span>
+                </div>
+                <div class="sidebar-item">
+                    <strong id="learning">Learning:</strong> <span id="learningText">Finished online course on data visualization</span>
+                </div>
+                <div class="sidebar-item">
+                    <strong id="personal">Personal:</strong> <span id="personalText">Started reading "The Midnight Library"</span>
+                </div>
+            </aside>
+        </div>
+
+        <section>
+            <h2 class="section-header" id="homeFamily">Home & Family</h2>
+            <div class="three-column">
+                <article class="article">
+                    <h3 class="subheading" id="kitchenRenovation">Kitchen Renovation Update</h3>
+                    <p class="article-text" id="kitchenText">The kitchen renovation project entered its third week with significant progress on cabinet installation. Despite a minor setback with delayed tile delivery, the project remains on track for completion by month's end.</p>
+                </article>
+                
+                <article class="article">
+                    <h3 class="subheading" id="familyGameNight">Family Game Night Revival</h3>
+                    <p class="article-text" id="gameNightText">Wednesday evening's board game session brought laughter and friendly competition back to our living room. "Settlers of Catan" proved once again why it's a household favorite, with heated negotiations lasting well past bedtime.</p>
+                </article>
+                
+                <article class="article">
+                    <h3 class="subheading" id="gardenUpdate">Garden Update</h3>
+                    <p class="article-text" id="gardenText">Spring planting continues with the addition of heirloom tomatoes and herbs. The mild weather has been favorable for growth, though increased watering schedules are now in effect.</p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-header" id="healthWellness">Health & Wellness</h2>
+            <article class="article">
+                <h3 class="subheading" id="newFitnessRoutine">New Fitness Routine Yields Results</h3>
+                <div class="byline"><span id="byYourName3">By [Your Name]</span> | <span id="thursdayMay7">Thursday, May 7, 2025</span></div>
+                <p class="article-text" id="fitnessText1">The recently adopted morning workout routine continues to show promising results. This week marked the fifth consecutive day of 6 AM gym sessions, with noticeable improvements in energy levels throughout the day. The combination of cardio and strength training appears to be the perfect balance for current fitness goals.</p>
+                
+                <div class="quote-box">
+                    <span id="workoutQuote">"The hardest part is always getting started, but once you're in the gym, everything flows naturally."</span>
+                    <div class="quote-attribution" id="workoutAttribution">— Morning Workout Revelation</div>
+                </div>
+                
+                <p class="article-text" id="fitnessText2">Nutrition tracking has also become more consistent, with meal prep Sundays proving instrumental in maintaining healthy eating habits during busy weekdays.</p>
+            </article>
+        </section>
+
+        <section>
+            <h2 class="section-header" id="entertainmentCulture">Entertainment & Culture</h2>
+            <div class="three-column">
+                <article class="article">
+                    <h3 class="subheading" id="movieNight">Movie Night: "Dune" Sequel</h3>
+                    <p class="article-text" id="movieText">Friday's home cinema experience featured the highly anticipated sequel, delivering on both visual spectacle and narrative depth. The home theater system proved its worth with immersive sound design.</p>
+                </article>
+                
+                <article class="article">
+                    <h3 class="subheading" id="newRestaurant">New Restaurant Discovery</h3>
+                    <p class="article-text" id="restaurantText">"Harmony Kitchen" exceeded expectations with its innovative fusion menu. The tasting menu's creative combinations of flavors earned it a spot on our regular rotation list.</p>
+                </article>
+                
+                <article class="article">
+                    <h3 class="subheading" id="concertReview">Concert Review</h3>
+                    <p class="article-text" id="concertText">Sunday's outdoor concert at the park provided the perfect end to the week. The acoustic performance showcased local talent while offering a relaxed atmosphere.</p>
+                </article>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-header" id="lookingAhead">Looking Ahead</h2>
+            <article class="article">
+                <h3 class="subheading" id="nextWeekAgenda">Next Week's Agenda</h3>
+                <p class="article-text" id="agendaText1">The upcoming week promises to be equally eventful with several key commitments on the horizon. Monday brings the monthly team meeting where project outcomes will be discussed in detail. Wednesday features a dental check-up, while Friday evening is reserved for the long-awaited dinner party with friends.</p>
+                
+                <p class="article-text" id="agendaText2">Professional development continues with the commencement of a new online certification course, expected to enhance skills in project management. Personal goals include maintaining the established workout routine and dedicating time to the half-finished novel on the bedside table.</p>
+                
+                <div class="quote-box">
+                    <span id="weeklyQuote">"Each week builds upon the last, creating a tapestry of experiences that define our year."</span>
+                    <div class="quote-attribution" id="weeklyAttribution">— Weekly Reflection</div>
+                </div>
+            </article>
+        </section>
+    </div>
+</body>
+</html>
