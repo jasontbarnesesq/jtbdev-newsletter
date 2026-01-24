@@ -1360,22 +1360,7 @@
                 showNotification(`${feed.name} ${feed.active ? 'activated' : 'deactivated'}`);
             }
         }
-        
-        // Scan news sources
-        function scanNews() {
-            document.getElementById('loadingSpinner').classList.add('active');
-            document.getElementById('newsResults').innerHTML = '';
-            
-            // Simulate API call delay
-            setTimeout(() => {
-                scannedNews = generateMockNews();
-                displayNewsResults(scannedNews);
-                analyzeSEO();
-                document.getElementById('loadingSpinner').classList.remove('active');
-                trackActivity('update', `Scanned news sources - found ${scannedNews.length} stories`);
-                showNotification(`Found ${scannedNews.length} relevant stories`);
-            }, 2000);
-        }
+
         // Display news results
         function displayNewsResults(news) {
             const filtered = currentFilter === 'all' 
